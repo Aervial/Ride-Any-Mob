@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+// TODO: Look into not being able to feed animals with items in hand (seeds, wheat) due to right click overlap.
+
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
@@ -166,7 +168,6 @@ public abstract class LivingEntityMixin {
         float yaw = rider.getYaw();
         float pitch = rider.getPitch();
 
-        // Override everything AFTER vanilla smoothing runs
         mob.setYaw(yaw);
         mob.prevYaw = yaw;
 

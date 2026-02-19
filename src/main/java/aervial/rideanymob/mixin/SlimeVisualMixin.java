@@ -18,14 +18,11 @@ public abstract class SlimeVisualMixin {
                     Math.abs(rider.sidewaysSpeed) > 0.1f ||
                     isJumping;
 
-            // Only freeze if we are truly stationary and grounded
             if (!isMoving && self.isOnGround()) {
                 self.targetStretch = 0.0f;
                 self.stretch = 0.0f;
                 self.lastStretch = 0.0f;
             }
-            // If isJumping is true, we do nothing and let the
-            // natural tick() logic (from your source) handle the stretch!
         }
     }
 }
