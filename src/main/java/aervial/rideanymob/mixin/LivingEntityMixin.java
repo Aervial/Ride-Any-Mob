@@ -25,13 +25,10 @@ public abstract class LivingEntityMixin {
     @Shadow protected boolean jumping;
     private static final ThreadLocal<Boolean> IS_TRAVELLING = ThreadLocal.withInitial(() -> false);
 
-    /**
-     * STANDALONE METHOD: Cleans up gravity for flying mobs when player dismounts.
-     */
+
     @Inject(method = "travel", at = @At("HEAD"))
     private void cleanUpGravity(Vec3d movementInput, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
-        // Check if it's a flyer or a bat and has no passengers
         if ((self instanceof FlyingEntity || self instanceof net.minecraft.entity.passive.BatEntity) && !self.hasPassengers()) {
             self.setNoGravity(false);
         }
@@ -45,24 +42,27 @@ public abstract class LivingEntityMixin {
         if (!(mob.getControllingPassenger() instanceof PlayerEntity rider)) return;
         if (IS_TRAVELLING.get()) return;
 
-        // PREVENTION: No fall damage and no AI interference
         mob.fallDistance = 0;
         mob.setTarget(null);
 
         mob.setYaw(rider.getYaw());
         mob.prevYaw = mob.getYaw();
+
+        mob.setPitch(rider.getPitch() * 0.5f);
+        mob.prevPitch = mob.getPitch();
+
         mob.setHeadYaw(mob.getYaw());
         mob.setBodyYaw(mob.getYaw());
+        mob.prevHeadYaw = mob.getYaw();
 
         if (mob instanceof SlimeEntity slime) {
             handleAutoSlimeMovement(slime, rider);
             ci.cancel();
         }
-        // BAT INTEGRATION: Added BatEntity here
+
         else if (mob instanceof FlyingEntity || mob instanceof net.minecraft.entity.passive.BeeEntity ||
                 mob instanceof net.minecraft.entity.passive.ParrotEntity || mob instanceof net.minecraft.entity.passive.BatEntity) {
 
-            // Wake the bat up if it's hanging
             if (mob instanceof net.minecraft.entity.passive.BatEntity bat) {
                 bat.setRoosting(false);
             }
@@ -81,14 +81,14 @@ public abstract class LivingEntityMixin {
         float speedMultiplier = 1.5f;
 
         if (mob instanceof net.minecraft.entity.passive.BatEntity) {
-            speedMultiplier = 0.4f; // 0.4f is very slow and controlled
+            speedMultiplier = 0.4f;
         }
 
         float speed = (float) mob.getAttributeValue(net.minecraft.entity.attribute.EntityAttributes.GENERIC_MOVEMENT_SPEED) * speedMultiplier;
         Vec3d lookVec = rider.getRotationVec(1.0f);
 
         double y = 0;
-        if (this.jumping) y = 0.25; // Lowered from 0.5 for smoother ascent
+        if (this.jumping) y = 0.25;
         else if (rider.isSneaking()) y = -0.25;
 
         mob.setVelocity(
@@ -153,6 +153,30 @@ public abstract class LivingEntityMixin {
             Vec3d currentVel = slime.getVelocity();
             slime.setVelocity(currentVel.x * 0.98, currentVel.y - 0.08, currentVel.z * 0.98);
         }
+    }
+
+    @Inject(method = "tickMovement", at = @At("TAIL"))
+    private void rideanymob$forceRotationAfterVanilla(CallbackInfo ci) {
+
+        LivingEntity self = (LivingEntity)(Object)this;
+
+        if (!(self instanceof MobEntity mob)) return;
+        if (!(mob.getControllingPassenger() instanceof PlayerEntity rider)) return;
+
+        float yaw = rider.getYaw();
+        float pitch = rider.getPitch();
+
+        // Override everything AFTER vanilla smoothing runs
+        mob.setYaw(yaw);
+        mob.prevYaw = yaw;
+
+        mob.setPitch(pitch);
+        mob.prevPitch = pitch;
+
+        mob.setHeadYaw(yaw);
+        mob.prevHeadYaw = yaw;
+
+        mob.setBodyYaw(yaw);
     }
 
 
