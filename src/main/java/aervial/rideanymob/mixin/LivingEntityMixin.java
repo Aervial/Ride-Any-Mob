@@ -111,7 +111,6 @@ public abstract class LivingEntityMixin {
         float strafe = rider.sidewaysSpeed;
         boolean isTryingToMove = Math.abs(forward) > 0.1f || Math.abs(strafe) > 0.1f || this.jumping;
 
-        // 1. JUMP LOGIC
         if (slime.isOnGround() && isTryingToMove && slime.getVelocity().y <= 0.01) {
             float sizeBoost = 0.1f * slime.getSize();
             double jumpHeight = 0.42 + sizeBoost;
@@ -135,23 +134,17 @@ public abstract class LivingEntityMixin {
             }
         }
 
-        // 2. THE ANIMATION FREEZE (HARD OVERRIDE)
         if (slime.isOnGround() && !isTryingToMove) {
-            // TargetStretch is the most important field to zero out.
-            // It tells the slime math 'don't try to animate toward a squish'.
             slime.targetStretch = 0.0f;
             slime.stretch = 0.0f;
             slime.lastStretch = 0.0f;
         }
 
-        // 3. PHYSICS
         slime.move(MovementType.SELF, slime.getVelocity());
 
         if (slime.isOnGround()) {
-            // High friction to make landings feel solid
             slime.setVelocity(slime.getVelocity().multiply(0.5, 1.0, 0.5));
         } else {
-            // Air drag/gravity
             Vec3d currentVel = slime.getVelocity();
             slime.setVelocity(currentVel.x * 0.98, currentVel.y - 0.08, currentVel.z * 0.98);
         }
