@@ -1,5 +1,6 @@
 package aervial.rideanymob.mixin;
 
+import aervial.rideanymob.RideToggle;
 import aervial.rideanymob.whitelist.RideWhitelist;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -8,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,6 +24,10 @@ public abstract class MobEntityMixin {
         MobEntity self = (MobEntity)(Object)this;
 
         if (hand != Hand.MAIN_HAND) return;
+
+        if (!RideToggle.isEnabled()) {
+            return; // allow vanilla interaction
+        }
 
         if (self.getWorld().isClient) return;
 
