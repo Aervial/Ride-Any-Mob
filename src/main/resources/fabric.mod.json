@@ -3,9 +3,9 @@
 	"id": "ride-any-mob",
 	"version": "${version}",
 	"name": "Ride Any Mob",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Ride any mob in Minecraft with this mod!",
 	"authors": [
-		"Me!"
+		"Aervial"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
