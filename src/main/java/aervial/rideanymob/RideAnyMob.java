@@ -10,7 +10,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.command.CommandRegistryAccess;
 
-
 public class RideAnyMob implements ModInitializer {
 
 	@Override
