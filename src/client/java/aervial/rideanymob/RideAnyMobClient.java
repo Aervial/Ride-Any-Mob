@@ -13,24 +13,6 @@ public class RideAnyMobClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ClientCommandRegistrationCallback.EVENT.register(this::registerCommands);
-	}
-
-	private void registerCommands(
-			CommandDispatcher<FabricClientCommandSource> dispatcher,
-			CommandRegistryAccess registryAccess) {
-
-		dispatcher.register(literal("toggleride")
-				.executes(ctx -> {
-
-					RideToggle.toggle();
-
-					ctx.getSource().sendFeedback(
-							Text.literal("RideAnyMob is now "
-									+ (RideToggle.isEnabled() ? "ENABLED" : "DISABLED"))
-					);
-
-					return 1;
-				}));
+		RideKeybinds.register();
 	}
 }

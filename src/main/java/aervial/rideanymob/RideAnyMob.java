@@ -4,17 +4,33 @@ import aervial.rideanymob.whitelist.RideWhitelist;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.util.Identifier;
 
 public class RideAnyMob implements ModInitializer {
+
+	public static final Identifier TOGGLE_PACKET =
+			new Identifier("rideanymob", "toggle");
 
 	@Override
 	public void onInitialize() {
 		RideWhitelist.load();
+
+		ServerPlayNetworking.registerGlobalReceiver(TOGGLE_PACKET,
+				(server, player, handler, buf, responseSender) -> {
+
+					boolean newState = buf.readBoolean();
+
+					server.execute(() -> {
+						PlayerRideState.set(player, newState);
+					});
+				});
+
 
 		CommandRegistrationCallback.EVENT.register(this::registerCommands);
 	}
