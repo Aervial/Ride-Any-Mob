@@ -3,12 +3,17 @@
 	"package": "aervial.rideanymob.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"ExampleMixin"
+		"MobEntityMixin",
+		"LivingEntityMixin",
+		"SlimeMixin",
+		"SlimeMoveControlAccessor",
+		"LivingEntityAccessor",
+		"SlimeEntityAccessor",
+		"SlimeSoundKillerMixin",
+		"SlimeVisualMixin",
+		"GhastRideMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
 	}
 }
